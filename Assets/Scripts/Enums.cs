@@ -4,3 +4,9 @@ public enum MapType
     Wall,
     Ground,
 }
+public enum HealthType
+{
+    Hunger,
+    Thirst,
+    Stress,
+}

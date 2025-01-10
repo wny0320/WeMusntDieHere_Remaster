@@ -1,16 +1,28 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 public class Miner : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    private string minerName;
+
+    private Health health;
+    private Talent talent;
+
     void Start()
     {
-        
+        health = GetComponent<Health>();
+        talent = GetComponent<Talent>();
     }
 
-    // Update is called once per frame
-    void Update()
+    public void Init()
     {
-        
+        health.Init();
+        talent.Init();
+    }
+
+    public void SetRandomMiner()
+    {
+        // 초기 설정은 임시로 2개의 재능을 50% 각각 50%확률로 획득가능
+        talent.AddRandomTalent(2, 50);
     }
 }

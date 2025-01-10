@@ -1,17 +1,23 @@
 using UnityEngine;
 
-public class Manger : MonoBehaviour
+public class Manager : MonoBehaviour
 {
-    // ΩÃ±€≈Ê
-    public static Manger Instance { get { Init(); return instance; } }
-    private static Manger instance;
+    public static Manager Instance { get { Init(); return instance; } }
+    private static Manager instance;
     #region Managers
     MinerManager _miner = new MinerManager();
+    TalentManager _talent = new TalentManager();
+    HealthManager _health = new HealthManager();
+    DataManager _data = new DataManager();
     public static MinerManager Miner { get { return instance._miner; } }
+    public static TalentManager Talent { get { return instance._talent; } }
+    public static HealthManager Health { get { return instance._health; } }
+    public static DataManager Data { get { return instance._data; } }
     #endregion
     private void Awake()
     {
         Init();
+        Data.OnAwake();
         Application.targetFrameRate = 60;
     }
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -29,12 +35,12 @@ public class Manger : MonoBehaviour
     {
         if (instance == null)
         {
-            instance = FindFirstObjectByType<Manger>();
+            instance = FindFirstObjectByType<Manager>();
             if (Instance != null)
             {
                 GameObject go = new GameObject();
-                instance = go.AddComponent<Manger>();
-                go.name = typeof(Manger).Name;
+                instance = go.AddComponent<Manager>();
+                go.name = typeof(Manager).Name;
                 DontDestroyOnLoad(go);
             }
         }
