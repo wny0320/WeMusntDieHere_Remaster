@@ -3,8 +3,6 @@ using System.Collections.Generic;
 
 public class Miner : MonoBehaviour
 {
-    private string minerName;
-
     private Health health;
     private Talent talent;
 

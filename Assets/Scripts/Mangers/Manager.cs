@@ -9,10 +9,12 @@ public class Manager : MonoBehaviour
     TalentManager _talent = new TalentManager();
     HealthManager _health = new HealthManager();
     DataManager _data = new DataManager();
+    ChoiceManager _choice = new ChoiceManager();
     public static MinerManager Miner { get { return instance._miner; } }
     public static TalentManager Talent { get { return instance._talent; } }
     public static HealthManager Health { get { return instance._health; } }
     public static DataManager Data { get { return instance._data; } }
+    public static ChoiceManager Choice { get { return instance._choice; } }
     #endregion
     private void Awake()
     {

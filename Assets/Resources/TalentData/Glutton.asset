@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88ef087ce2eaea24ebc2158a2c2e8936, type: 3}
   m_Name: Glutton
   m_EditorClassIdentifier: 
-  talentName: 
-  talentExplain: 
+  talentName: Glutton
+  talentExplain: Hunger Disadvantage 5%
   affectType: 0
-  affectValue: 0
+  affectValue: -0.05
