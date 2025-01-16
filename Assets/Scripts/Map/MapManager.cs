@@ -3,7 +3,7 @@ using System.Linq;
 using UnityEngine;
 using static UnityEditor.PlayerSettings;
 
-public class MapManager : MonoBehaviour
+public class MapManager : Singleton<MapManager>
 {
     Vector2Int[] dirs = { Vector2Int.down, Vector2Int.up, Vector2Int.left, Vector2Int.right };
 
@@ -14,6 +14,8 @@ public class MapManager : MonoBehaviour
 
     private bool[,] map;
     private Maps[] mapInfo;
+
+    public Vector2Int playerPos = Vector2Int.one;
 
     void Start()
     {
@@ -31,7 +33,7 @@ public class MapManager : MonoBehaviour
     {
         height = height + 2; width = width + 2; //맞춰주기 위해
         map = new bool[height, width];
-        Vector2Int current = new Vector2Int(1, 1); //시작
+        Vector2Int current = playerPos; //시작
         map[current.x, current.y] = true;
 
         Stack<Vector2Int> stack = new Stack<Vector2Int>();
@@ -86,7 +88,7 @@ public class MapManager : MonoBehaviour
         {
             for (int j = 1; j < width - 1; j++)
             {
-                mapInfo[pos].Init(map[i, j]);
+                mapInfo[pos].Init(map[i, j], new Vector2Int(i, j));
                 pos++;
             }
         }
