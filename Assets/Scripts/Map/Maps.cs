@@ -1,6 +1,8 @@
 using UnityEngine;
 using System;
 using UnityEngine.UI;
+using UnityEngine.Events;
+using System.Collections;
 
 public class Maps : MonoBehaviour
 {
@@ -52,7 +54,7 @@ public class Maps : MonoBehaviour
         if (CheckNear())
         {
             MapManager.Instance.playerPos = pos;
-            Debug.Log(pos);
+            StartCoroutine(MoveMapCoroutine());
         }
         else
         {
@@ -67,4 +69,29 @@ public class Maps : MonoBehaviour
         return false;
     }
 
+    private IEnumerator MoveMapCoroutine()
+    {
+        yield return StartCoroutine(MapManager.Instance.Fade(true));
+        ChangeMap();
+        yield return StartCoroutine(MapManager.Instance.Fade(false));
+    }
+
+    private void ChangeMap()
+    {
+        switch (mapType)
+        {
+            case MapType.Ground:
+                MapManager.Instance.mapSprite.color = Color.gray;
+                break;
+            case MapType.Trap:
+                MapManager.Instance.mapSprite.color = Color.red;
+                break;
+            case MapType.Water:
+                MapManager.Instance.mapSprite.color = Color.cyan;
+                break;
+            case MapType.BaseCamp:
+                MapManager.Instance.mapSprite.color = Color.yellow;
+                break;
+        }
+    }
 }

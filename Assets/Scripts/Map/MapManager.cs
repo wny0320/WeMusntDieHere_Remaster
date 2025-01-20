@@ -1,6 +1,8 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.UI;
 using static UnityEditor.PlayerSettings;
 
 public class MapManager : Singleton<MapManager>
@@ -16,6 +18,9 @@ public class MapManager : Singleton<MapManager>
     private Maps[] mapInfo;
 
     public Vector2Int playerPos = Vector2Int.one;
+    public SpriteRenderer mapSprite;
+
+    [SerializeField] Image FadeUI;
 
     void Start()
     {
@@ -84,7 +89,7 @@ public class MapManager : Singleton<MapManager>
     void RenderMaps()
     {
         int pos = 0;
-        for(int i = 1; i < height - 1; i++)
+        for (int i = 1; i < height - 1; i++)
         {
             for (int j = 1; j < width - 1; j++)
             {
@@ -92,5 +97,19 @@ public class MapManager : Singleton<MapManager>
                 pos++;
             }
         }
+    }
+
+    public IEnumerator Fade(bool isFade)
+    {
+        FadeUI.gameObject.SetActive(true);
+        float timer = 0f;
+        while (timer <= 2f)
+        {
+            yield return null;
+            timer += Time.unscaledDeltaTime;
+            FadeUI.color = Color.Lerp(isFade ? new Color(0, 0, 0, 0) : new Color(0, 0, 0, 1), isFade ? new Color(0, 0, 0, 1) : new Color(0, 0, 0, 0), timer);
+        }
+
+        FadeUI.gameObject.SetActive(false);
     }
 }
