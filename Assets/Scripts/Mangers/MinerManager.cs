@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class MinerManager : MonoBehaviour
+public class MinerManager : Singleton<MinerManager>
 {
 
 }

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class ChoiceManager : MonoBehaviour
+public class ChoiceManager : Singleton<ChoiceManager>
 {
     
 }

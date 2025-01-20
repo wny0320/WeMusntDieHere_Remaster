@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 
-public class TalentManager : MonoBehaviour
+public class TalentManager : Singleton<TalentManager>
 {
     /// <summary>
     /// 특성들을 기반으로 얻은 각각의 보너스를 계산하는 함수
@@ -27,7 +27,7 @@ public class TalentManager : MonoBehaviour
     /// <returns>랜덤으로 뽑은 특성들의 데이터 리스트</returns>
     public List<TalentData> GetRandomTalents(int _num = 1, int _chance = 100)
     {
-        List<TalentData> talentList = Manager.Data.talentDataList;
+        List<TalentData> talentList = DataManager.Instance.talentDataList;
         List<TalentData> randomTalentList = new List<TalentData>();
         int talentNum = talentList.Count;
         for (int i = 0; i < _num; i++)

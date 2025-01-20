@@ -19,7 +19,7 @@ public class Talent : MonoBehaviour
     /// </summary>
     private void CalculateAdvantages()
     {
-        float[] advantages = Manager.Talent.CalculateAdvantages(talents);
+        float[] advantages = TalentManager.Instance.CalculateAdvantages(talents);
         hungerAdvantage = advantages[(int)HealthType.Hunger];
         thirstAdvantage = advantages[(int)HealthType.Thirst];
         stressAdvantage = advantages[(int)HealthType.Stress];
@@ -62,7 +62,7 @@ public class Talent : MonoBehaviour
     /// <param name="_chance">¾ò°ÔµÇ´Â È®·ü, ¹éºÐ·ü 0~100%</param>
     public void AddRandomTalent(int _num = 1, int _chance = 100)
     {
-        List<TalentData> randomTalentList = Manager.Talent.GetRandomTalents(_num, _chance);
+        List<TalentData> randomTalentList = TalentManager.Instance.GetRandomTalents(_num, _chance);
         int cnt = randomTalentList.Count;
         for (int i = 0; i < cnt; i++)
         {
