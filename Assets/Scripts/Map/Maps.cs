@@ -13,6 +13,15 @@ public class Maps : MonoBehaviour
 
     public bool isVisited = false;
 
+    public void SetEscape()
+    {
+        mapType = MapType.Escape;
+
+        //임시
+        Image img = GetComponent<Image>();
+        img.color = Color.black;
+    }
+
     public void Init(bool isMap, Vector2Int pos)
     {
         this.isMap = isMap;
@@ -30,7 +39,7 @@ public class Maps : MonoBehaviour
 
     private void SetRandMap()
     {
-        int rand = UnityEngine.Random.Range(0, Enum.GetValues(typeof(MapType)).Length);
+        int rand = UnityEngine.Random.Range(0, Enum.GetValues(typeof(MapType)).Length -1);
         mapType = (MapType)rand;
 
         //임시

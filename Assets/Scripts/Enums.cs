@@ -6,6 +6,8 @@ public enum MapType
     Water,
     BaseCamp,
 
+
+    Escape,
 }
 public enum HealthType
 {

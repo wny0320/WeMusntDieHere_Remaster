@@ -1,9 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 using static UnityEditor.PlayerSettings;
+using static UnityEngine.RuleTile.TilingRuleOutput;
 
 public class MapManager : Singleton<MapManager>
 {
@@ -16,17 +19,20 @@ public class MapManager : Singleton<MapManager>
 
     private bool[,] map;
     private Maps[] mapInfo;
+    List<Vector2Int> EscapeCandidate = new List<Vector2Int>();
 
     public Vector2Int playerPos = Vector2Int.one;
     public SpriteRenderer mapSprite;
 
     [SerializeField] Image FadeUI;
 
+
     void Start()
     {
         GetMaps();
         GenerateMap();
         RenderMaps();
+        SetEscapeMap();
     }
 
     private void GetMaps()
@@ -78,6 +84,8 @@ public class MapManager : Singleton<MapManager>
                 neighbors.Add(neighbor);
         }
 
+        if (neighbors.Count < 1) EscapeCandidate.Add(cell);
+
         return neighbors;
     }
 
@@ -98,6 +106,36 @@ public class MapManager : Singleton<MapManager>
             }
         }
     }
+
+    void SetEscapeMap()
+    {
+        EscapeCandidate = EscapeCandidate.Where(x => CheckEscapeBound(x)).ToList();
+        EscapeCandidate.Remove(new Vector2Int(1, 1));
+
+        //Vector2Int t = EscapeCandidate[Random.Range(0, temp.Count)];
+        foreach (var t in EscapeCandidate)
+        {
+            mapInfo[(t.x - 1) * (width - 2) + t.y - 1].SetEscape();
+        }
+    }
+
+    bool CheckEscapeBound(Vector2Int v)
+    {
+        int nearCount = 0;
+
+        if (IsInBound(v.x, v.y))
+        {
+            foreach (Vector2Int dir in dirs)
+            {
+                if (map[(v.x + dir.x), (v.y + dir.y)])
+                    nearCount++;
+            }
+        }
+
+        if (nearCount > 1) return false;
+        return true;
+    }
+
 
     public IEnumerator Fade(bool isFade)
     {
