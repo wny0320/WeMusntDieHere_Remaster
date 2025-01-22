@@ -1,19 +1,22 @@
 using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine.EventSystems;
 
 public class Miner : MonoBehaviour
 {
-    private Health health;
-    private Talent talent;
+    public Health health;
+    public Talent talent;
 
-    void Start()
+    void Awake()
     {
-        health = GetComponent<Health>();
-        talent = GetComponent<Talent>();
+        Init();
     }
 
     public void Init()
     {
+        health = GetComponent<Health>();
+        talent = GetComponent<Talent>();
+
         health.Init();
         talent.Init();
     }
@@ -23,4 +26,5 @@ public class Miner : MonoBehaviour
         // 초기 설정은 임시로 2개의 재능을 50% 각각 50%확률로 획득가능
         talent.AddRandomTalent(2, 50);
     }
+
 }

@@ -16,8 +16,8 @@ public class Health : MonoBehaviour
     }
     public void Init()
     {
-        hunger = 0;
-        thirst = 0;
+        hunger = 100;
+        thirst = 100;
         stress = 0;
 
         maxHunger = 100;
@@ -46,7 +46,7 @@ public class Health : MonoBehaviour
     /// <summary>
     /// HealthData 전부를 받고 싶을 때 사용
     /// </summary>
-    /// <returns>HealthData의 int 배열</returns>
+    /// <returns>HealthData의 int 배열, hunger, thirst, stress 순</returns>
     public int[] GetHealthDatas()
     {
         int[] healthData = { hunger, thirst, stress };
@@ -56,19 +56,19 @@ public class Health : MonoBehaviour
     /// 하나의 HealthData 값만 수정하고 싶을 때 사용
     /// </summary>
     /// <param name="_healthType">수정하고 싶은 HealthData의 Type</param>
-    /// <param name="_value">수정할 값</param>
+    /// <param name="_value">더할 값</param>
     public void EditHealthData(HealthType _healthType, int _value)
     {
         switch (_healthType)
         {
             case HealthType.Hunger:
-                hunger = _value;
+                hunger += _value;
                 break;
             case HealthType.Thirst:
-                thirst = _value;
+                thirst += _value;
                 break;
             case HealthType.Stress:
-                stress = _value;
+                stress += _value;
                 break;
             default:
                 break;
