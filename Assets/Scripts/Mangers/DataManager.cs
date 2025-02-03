@@ -1,5 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
+using Newtonsoft.Json;
+using System.IO;
 
 public class DataManager : Singleton<DataManager>
 {
@@ -23,5 +25,31 @@ public class DataManager : Singleton<DataManager>
         Item[] itemData = Resources.LoadAll<Item>(ITEM_DATA_PATH);
         foreach (Item dataItem in itemData)
             itemDataList.Add(dataItem);
+    }
+    public string DataToJson(Object _obj)
+    {
+        string jsonObj = JsonConvert.SerializeObject(_obj);
+        return jsonObj;
+    }
+    public T JsonToData<T>(string _jsonObj)
+    {
+        T obj = JsonConvert.DeserializeObject<T>(_jsonObj);
+        return obj;
+    }
+    public void ExportJsonData(string _jsonObj)
+    {
+        string jsonPath = Path.Combine(Application.persistentDataPath, $"{nameof(_jsonObj)}.Json");
+        File.WriteAllText(jsonPath, _jsonObj);
+    }
+    public T ImportJsonData<T>(string _jsonName)
+    {
+        string jsonPath = Path.Combine(Application.persistentDataPath, $"{nameof(_jsonName)}.Json");
+        if (File.Exists(jsonPath) == true)
+        {
+            string jsonFile = File.ReadAllText(jsonPath);
+            T jsonObj = JsonToData<T>(jsonFile);
+            return jsonObj;
+        }
+        return default(T);
     }
 }
