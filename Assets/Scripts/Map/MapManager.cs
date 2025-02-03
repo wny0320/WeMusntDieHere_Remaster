@@ -16,9 +16,10 @@ public class MapManager : Singleton<MapManager>
     [SerializeField] int height = 10;
     [SerializeField] int width = 10;
     [SerializeField] GameObject MapHolder;
+    [SerializeField] Maps MapObj;
 
     private bool[,] map;
-    private Maps[] mapInfo;
+    List<Maps> MapList = new List<Maps>();
     List<Vector2Int> EscapeCandidate = new List<Vector2Int>();
 
     public Vector2Int playerPos = Vector2Int.one;
@@ -29,15 +30,9 @@ public class MapManager : Singleton<MapManager>
 
     void Start()
     {
-        GetMaps();
         GenerateMap();
         RenderMaps();
         SetEscapeMap();
-    }
-
-    private void GetMaps()
-    {
-        mapInfo = MapHolder.GetComponentsInChildren<Maps>();
     }
 
     public void GenerateMap()
@@ -101,7 +96,9 @@ public class MapManager : Singleton<MapManager>
         {
             for (int j = 1; j < width - 1; j++)
             {
-                mapInfo[pos].Init(map[i, j], new Vector2Int(i, j));
+                Maps maps = Instantiate(MapObj, MapHolder.transform);
+                maps.Init(map[i, j], new Vector2Int(i, j));
+                MapList.Add(maps);
                 pos++;
             }
         }
@@ -115,7 +112,7 @@ public class MapManager : Singleton<MapManager>
         //Vector2Int t = EscapeCandidate[Random.Range(0, temp.Count)];
         foreach (var t in EscapeCandidate)
         {
-            mapInfo[(t.x - 1) * (width - 2) + t.y - 1].SetEscape();
+            MapList[(t.x - 1) * (width - 2) + t.y - 1].SetEscape();
         }
     }
 

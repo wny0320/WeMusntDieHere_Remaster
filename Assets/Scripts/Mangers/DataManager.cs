@@ -28,19 +28,21 @@ public class DataManager : Singleton<DataManager>
     }
     public string DataToJson(Object _obj)
     {
-        string jsonObj = JsonConvert.SerializeObject(_obj);
-        return jsonObj;
+        return JsonConvert.SerializeObject(_obj);
     }
+
     public T JsonToData<T>(string _jsonObj)
     {
-        T obj = JsonConvert.DeserializeObject<T>(_jsonObj);
-        return obj;
+        return JsonConvert.DeserializeObject<T>(_jsonObj);
     }
+
     public void ExportJsonData(string _jsonObj)
     {
         string jsonPath = Path.Combine(Application.persistentDataPath, $"{nameof(_jsonObj)}.Json");
+
         File.WriteAllText(jsonPath, _jsonObj);
     }
+
     public T ImportJsonData<T>(string _jsonName)
     {
         string jsonPath = Path.Combine(Application.persistentDataPath, $"{nameof(_jsonName)}.Json");

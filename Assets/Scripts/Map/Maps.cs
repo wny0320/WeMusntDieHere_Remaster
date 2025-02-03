@@ -3,10 +3,10 @@ using System;
 using UnityEngine.UI;
 using UnityEngine.Events;
 using System.Collections;
+using UnityEditor.SceneManagement;
 
 public class Maps : MonoBehaviour
 {
-    private bool isMap;
     private Vector2Int pos;
     private Sprite MapSprite;
     private MapType mapType;
@@ -24,12 +24,12 @@ public class Maps : MonoBehaviour
 
     public void Init(bool isMap, Vector2Int pos)
     {
-        this.isMap = isMap;
         this.pos = pos;
 
         if (!isMap)
         {
-            gameObject.SetActive(false);
+            GetComponent<Image>().color = new Color(0f, 0f, 0f, 0f);
+            Destroy(GetComponent<Button>());
             return;
         }
 
@@ -78,6 +78,7 @@ public class Maps : MonoBehaviour
         return false;
     }
 
+    //mapmanager에 옮기던가 해야됨
     private IEnumerator MoveMapCoroutine()
     {
         yield return StartCoroutine(MapManager.Instance.Fade(true));
@@ -85,6 +86,7 @@ public class Maps : MonoBehaviour
         yield return StartCoroutine(MapManager.Instance.Fade(false));
     }
 
+    //맵 이동시 호출됨 - 임시 코드
     private void ChangeMap()
     {
         switch (mapType)
