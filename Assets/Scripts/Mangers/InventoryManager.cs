@@ -15,4 +15,15 @@ public class InventoryManager : Singleton<InventoryManager>
             slotList.Add(slot);
         }
     }
+    public void AddItem(Item _item)
+    {
+        for (int i = 0; i < slotList.Count; i++)
+        {
+            if(slotList[i].GetItem() == null)
+            {
+                slotList[i].AssginItem(_item);
+                return;
+            }
+        }
+    }
 }

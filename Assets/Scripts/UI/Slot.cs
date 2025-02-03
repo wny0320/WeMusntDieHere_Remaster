@@ -1,11 +1,12 @@
+using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class Slot : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
-    public Image image;
-    public Item item;
+    private Image image;
+    private Item item;
 
     private Transform myParent;
     private Transform targetParent;
@@ -44,6 +45,10 @@ public class Slot : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHand
             image.raycastTarget = false;
         }
     }
+    public Item GetItem()
+    {
+        return item;
+    }
 
     public void OnBeginDrag(PointerEventData eventData)
     {
@@ -58,12 +63,14 @@ public class Slot : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHand
 
     public void OnEndDrag(PointerEventData eventData)
     {
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        RaycastHit[] hits = Physics.RaycastAll(ray);
-        foreach (RaycastHit hit in hits)
+        //모바일 대응시 mousePosition이 아닌 Input.touches를 사용하거나 fingerId 사용
+        Vector2 wp = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        Ray2D ray = new Ray2D(wp, Vector2.zero);
+        RaycastHit2D[] hits = Physics2D.RaycastAll(ray.origin, ray.direction);
+        Debug.Log(hits.Length);
+        foreach (RaycastHit2D hit in hits)
         {
-            Debug.Log(hit.collider.gameObject.name);
-            if(hit.rigidbody.TryGetComponent(out Miner _miner))
+            if(hit.collider.TryGetComponent(out Miner _miner))
             {
                 _miner.health.EditHealthData(item.healthType, item.healthValue);
                 image.sprite = null;

@@ -73,6 +73,7 @@ public class Health : MonoBehaviour
             default:
                 break;
         }
+        MinMaxValueSet();
     }
     /// <summary>
     /// HealData 전부를 수정할 때 사용
@@ -83,5 +84,23 @@ public class Health : MonoBehaviour
         hunger = _values[0];
         thirst = _values[1];
         stress = _values[2];
+        MinMaxValueSet();
+    }
+    private void MinMaxValueSet()
+    {
+        if(hunger > maxHunger)
+            hunger = maxHunger;
+        if(hunger < 0)
+            hunger = 0;
+
+        if(thirst > maxThirst)
+            thirst = maxThirst;
+        if(thirst < 0)
+            thirst = 0;
+
+        if(stress > maxStress)
+            stress = maxStress;
+        if(stress < 0)
+            stress = 0;
     }
 }
