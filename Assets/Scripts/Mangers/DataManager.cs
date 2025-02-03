@@ -10,9 +10,9 @@ public class DataManager : Singleton<DataManager>
     protected override void Awake()
     {
         base.Awake();
-        TalentDataImport();
+        DataImport();
     }
-    private void TalentDataImport()
+    private void DataImport()
     {
         talentDataList.Clear();
         TalentData[] talentData = Resources.LoadAll<TalentData>(TALENT_DATA_PATH);
