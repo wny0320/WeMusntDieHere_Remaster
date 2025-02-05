@@ -1,9 +1,7 @@
 using UnityEngine;
 using System;
 using UnityEngine.UI;
-using UnityEngine.Events;
 using System.Collections;
-using UnityEditor.SceneManagement;
 
 public class Maps : MonoBehaviour
 {
@@ -11,20 +9,10 @@ public class Maps : MonoBehaviour
     private Sprite MapSprite;
     private MapType mapType;
 
-    public bool isVisited = false;
-
-    public void SetEscape()
-    {
-        mapType = MapType.Escape;
-
-        //임시
-        Image img = GetComponent<Image>();
-        img.color = Color.black;
-    }
-
-    public void Init(bool isMap, Vector2Int pos)
+    public void Init(bool isMap, Vector2Int pos, MapType mapType)
     {
         this.pos = pos;
+        this.mapType = mapType;
 
         if (!isMap)
         {
@@ -33,27 +21,27 @@ public class Maps : MonoBehaviour
             return;
         }
 
-        SetRandMap();
+        SetMap(mapType);
         GetComponent<Button>().onClick.AddListener(OnClickMap);
     }
 
-    private void SetRandMap()
+    private void SetMap(MapType mapType)
     {
-        int rand = UnityEngine.Random.Range(0, Enum.GetValues(typeof(MapType)).Length -1);
-        mapType = (MapType)rand;
-
         //임시
         Image img = GetComponent<Image>();
-        switch(rand)
+        switch(mapType)
         {
-            case 1:
+            case MapType.Trap:
                 img.color = Color.red;
                 break;
-            case 2:
+            case MapType.Water:
                 img.color = Color.blue;
                 break;
-            case 3:
+            case MapType.BaseCamp:
                 img.color = Color.yellow;
+                break;
+            case MapType.Escape:
+                img.color = Color.black;
                 break;
         }
     }
@@ -62,7 +50,8 @@ public class Maps : MonoBehaviour
     {
         if (CheckNear())
         {
-            MapManager.Instance.playerPos = pos;
+            MapManager.Instance.SetPlayerPos(pos);
+            //MapManager.Instance.SaveMap();
             StartCoroutine(MoveMapCoroutine());
         }
         else
@@ -73,7 +62,7 @@ public class Maps : MonoBehaviour
 
     private bool CheckNear()
     {
-        if ((MapManager.Instance.playerPos - pos).magnitude == 1f)
+        if ((MapManager.Instance.GetPlayerPos() - pos).magnitude == 1f)
             return true;
         return false;
     }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -5,8 +6,6 @@ using System.Linq.Expressions;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
-using static UnityEditor.PlayerSettings;
-using static UnityEngine.RuleTile.TilingRuleOutput;
 
 public class MapManager : Singleton<MapManager>
 {
@@ -18,11 +17,17 @@ public class MapManager : Singleton<MapManager>
     [SerializeField] GameObject MapHolder;
     [SerializeField] Maps MapObj;
 
+    private MapJsonData mapJsonData;
+    //아래 private가 mapjsondata에 있는 것들
     private bool[,] map;
-    List<Maps> MapList = new List<Maps>();
-    List<Vector2Int> EscapeCandidate = new List<Vector2Int>();
+    private bool[,] isVisited;
+    private MapType[,] mapType;
+    private List<Vector2Int> EscapeCandidate = new List<Vector2Int>();
+    private Vector2Int playerPos = Vector2Int.one;
 
-    public Vector2Int playerPos = Vector2Int.one;
+    List<Maps> MapList = new List<Maps>();
+    //MapList[(x - 1) * (width - 2) + y - 1] - map 좌표 대응
+
     public SpriteRenderer mapSprite;
 
     [SerializeField] Image FadeUI;
@@ -30,17 +35,39 @@ public class MapManager : Singleton<MapManager>
 
     void Start()
     {
+        GetMapData();
         GenerateMap();
         RenderMaps();
         SetEscapeMap();
+        SaveMap();
     }
 
-    public void GenerateMap()
+    private void GetMapData()   
+    {
+        mapJsonData = DataManager.Instance.ImportJsonData<MapJsonData>();
+
+        //Debug.Log(mapJsonData == null ? "null" : "notnull");
+        if (mapJsonData != null)
+        {
+            map = mapJsonData.map;
+            EscapeCandidate = mapJsonData.EscapeCandidate;
+            mapType = mapJsonData.mapTypes;
+            playerPos = mapJsonData.playerPos;
+            isVisited = mapJsonData.isVisited;
+        }
+    }
+
+    private void GenerateMap()
     {
         height = height + 2; width = width + 2; //맞춰주기 위해
+        if (mapJsonData != null) return;
+
         map = new bool[height, width];
+        isVisited = new bool[height, width];
+        mapType = new MapType[height, width];
         Vector2Int current = playerPos; //시작
         map[current.x, current.y] = true;
+        isVisited[current.x, current.y] = true;
 
         Stack<Vector2Int> stack = new Stack<Vector2Int>();
         stack.Push(current);
@@ -55,7 +82,7 @@ public class MapManager : Singleton<MapManager>
                 stack.Push(current);
 
                 // 무작위로 이웃 선택
-                Vector2Int chosen = neighbors[Random.Range(0, neighbors.Count)];
+                Vector2Int chosen = neighbors[UnityEngine.Random.Range(0, neighbors.Count)];
 
                 // 현재 위치와 선택된 위치 사이의 벽을 부수기
                 Vector2Int between = (current + chosen) / 2;
@@ -89,34 +116,47 @@ public class MapManager : Singleton<MapManager>
         return x > 0 && x < height - 1 && y > 0 && y < width - 1;
     }
 
-    void RenderMaps()
+    private void RenderMaps()
     {
         int pos = 0;
+        MapType mt = 0;
         for (int i = 1; i < height - 1; i++)
         {
             for (int j = 1; j < width - 1; j++)
             {
                 Maps maps = Instantiate(MapObj, MapHolder.transform);
-                maps.Init(map[i, j], new Vector2Int(i, j));
+
+                if (mapJsonData == null)
+                {
+                    mt = (MapType)UnityEngine.Random.Range(0, Enum.GetValues(typeof(MapType)).Length - 1);
+                    mapType[i, j] = mt;
+                }
+                else mt = mapType[i, j];
+                maps.Init(map[i, j], new Vector2Int(i, j), mt);
                 MapList.Add(maps);
                 pos++;
             }
         }
     }
 
-    void SetEscapeMap()
+    private void SetEscapeMap()
     {
+        if (mapJsonData != null) return;
+
         EscapeCandidate = EscapeCandidate.Where(x => CheckEscapeBound(x)).ToList();
         EscapeCandidate.Remove(new Vector2Int(1, 1));
 
         //Vector2Int t = EscapeCandidate[Random.Range(0, temp.Count)];
+        Debug.Log(EscapeCandidate.Count);
+        Debug.Log(MapList.Count);
+
         foreach (var t in EscapeCandidate)
         {
-            MapList[(t.x - 1) * (width - 2) + t.y - 1].SetEscape();
+            mapType[t.x, t.y] = MapType.Escape;
         }
     }
 
-    bool CheckEscapeBound(Vector2Int v)
+    private bool CheckEscapeBound(Vector2Int v)
     {
         int nearCount = 0;
 
@@ -131,6 +171,19 @@ public class MapManager : Singleton<MapManager>
 
         if (nearCount > 1) return false;
         return true;
+    }
+
+    public void SaveMap()
+    {
+        mapJsonData = new MapJsonData(map, isVisited, mapType, EscapeCandidate, playerPos);
+        DataManager.Instance.ExportJsonData<MapJsonData>(mapJsonData);
+    }
+
+    public Vector2Int GetPlayerPos() => playerPos;
+    public void SetPlayerPos(Vector2Int pos)
+    {
+        playerPos = pos;
+        isVisited[pos.x, pos.y] = true;
     }
 
 

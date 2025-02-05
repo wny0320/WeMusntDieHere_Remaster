@@ -26,9 +26,9 @@ public class DataManager : Singleton<DataManager>
         foreach (Item dataItem in itemData)
             itemDataList.Add(dataItem);
     }
-    public string DataToJson(Object _obj)
+    public string DataToJson(object _obj)
     {
-        return JsonConvert.SerializeObject(_obj);
+        return JsonConvert.SerializeObject(_obj, Formatting.Indented);
     }
 
     public T JsonToData<T>(string _jsonObj)
@@ -36,22 +36,25 @@ public class DataManager : Singleton<DataManager>
         return JsonConvert.DeserializeObject<T>(_jsonObj);
     }
 
-    public void ExportJsonData(string _jsonObj)
+    public void ExportJsonData<T>(object _obj)
     {
-        string jsonPath = Path.Combine(Application.persistentDataPath, $"{nameof(_jsonObj)}.Json");
+        string jsonPath = Path.Combine(Application.persistentDataPath, $"{typeof(T).Name}.Json");
 
-        File.WriteAllText(jsonPath, _jsonObj);
+        File.WriteAllText(jsonPath, DataToJson(_obj));
     }
 
-    public T ImportJsonData<T>(string _jsonName)
+    public T ImportJsonData<T>()
     {
-        string jsonPath = Path.Combine(Application.persistentDataPath, $"{nameof(_jsonName)}.Json");
+        // Application.persistentDataPath = C:\Users\사용자이름\AppData\LocalLow\회사이름\게임이름
+        string jsonPath = Path.Combine(Application.persistentDataPath, $"{typeof(T).Name}.Json");
+        Debug.Log(jsonPath);
         if (File.Exists(jsonPath) == true)
         {
             string jsonFile = File.ReadAllText(jsonPath);
             T jsonObj = JsonToData<T>(jsonFile);
             return jsonObj;
         }
+
         return default(T);
     }
 }
